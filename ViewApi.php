@@ -18,8 +18,8 @@ require_once 'ViewDocument.php';
  *
  */
 class ViewApi {
-	//private static $apiServiceRootUrl = 'http://api.webpdf365.com/api/v1.0';
-	private static $apiServiceRootUrl = 'http://it-api.webpdf365.com/api/v1.0';
+	//private $apiServiceRootUrl = 'http://api.webpdf365.com/api/v1.0';
+	private $apiServiceRootUrl = 'http://it-api.webpdf365.com/api/v1.0';
 	private $apiDocumentUrl = '/documents';
 	private $apiUploadDocumentUrl = '/documents';
 	private $apiSessionUrl = '/sessions';
@@ -32,19 +32,25 @@ class ViewApi {
 	 * and sets various URLs needed for interacting with the API.
 	 * 
 	 * @param String $apiKey
-	 * 	API Key for your Webpdf View Application.	
+	 * 	API Key for your Webpdf View Application.
+	 * @param String $apiServiceRootUrl
+	 *  API Service Root Url.
 	 */
-	public function __construct($apiKey) {
+	public function __construct($apiKey, $apiServiceRootUrl = null) {
 		// Ensure we have access to cURL.
 		$curlInstalled = in_array('curl', get_loaded_extensions()) && function_exists('curl_version');
 		if (!$curlInstalled) {
 			throw new ViewException('cURL extension not found.');
 		}
 		
+		if ($apiServiceRootUrl != null && !empty($apiServiceRootUrl)) {
+			$this->apiServiceRootUrl = $apiServiceRootUrl;
+		}
+		
 		$this->apiKey = $apiKey;
-		$this->apiDocumentUrl = self::$apiServiceRootUrl . $this->apiDocumentUrl;
-		$this->apiUploadDocumentUrl = self::$apiServiceRootUrl . $this->apiUploadDocumentUrl . '?api_key=' . $this->apiKey;
-		$this->apiSessionUrl = self::$apiServiceRootUrl . $this->apiSessionUrl . '?api_key=' . $this->apiKey;
+		$this->apiDocumentUrl = $this->apiServiceRootUrl . $this->apiDocumentUrl;
+		$this->apiUploadDocumentUrl = $this->apiServiceRootUrl . $this->apiUploadDocumentUrl . '?api_key=' . $this->apiKey;
+		$this->apiSessionUrl = $this->apiServiceRootUrl . $this->apiSessionUrl . '?api_key=' . $this->apiKey;
 		return $this;
 	}
 	
