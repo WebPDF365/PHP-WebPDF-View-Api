@@ -1,9 +1,3 @@
-Sumile WebPDF View PHP SDK
-================
-**Unofficial PHP SDK for the [WebPDF View API](http://api.webpdf365.com).**
-
-- - -
-
 Documentation
 -------------
 For general API documentaion, please review the [WebPDF View API Documentation](http://api.webpdf365.com/ApiList).
