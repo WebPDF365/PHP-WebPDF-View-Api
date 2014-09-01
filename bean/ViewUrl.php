@@ -10,12 +10,12 @@
  */
 class ViewUrl {
 	/**
-	 * 阅读文档路径
+	 * The path of document reading
 	 */
 	public $view;
 	
 	/**
-	 * 表示使用Viewer.js嵌入显示文档时候的url参数值
+	 * url parameter when use Viewer.js to embed document
 	 */
 	public $assets;
 }

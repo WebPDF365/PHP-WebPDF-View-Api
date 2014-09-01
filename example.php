@@ -13,13 +13,9 @@ $viewApi = new ViewApi($api_key);
  *  Create new document we want to upload.
  *  用URL的方式
  */
-/*$viewDocumentByURL = new ViewDocument(array(
+$viewDocumentByURL = new ViewDocument(array(
 	'fileName' => 'test document', 
 	'fileUrl' => 'URL_TO_FILE'
-	));*/
-$viewDocumentByURL = new ViewDocument(array(
-	'fileName' => 'f886haoc.pdf', 
-	'fileUrl' => 'http://www.irs.gov/pub/irs-pdf/f886haoc.pdf'
 	));
 
 $documentBeanByURL;
@@ -43,11 +39,8 @@ try {
  *  Create new document we want to upload.
  *  用Path的方式
  */
-/*$viewDocumentByPath = new ViewDocument(array(
-	'filePath' => 'PATH_TO_FILE'
-	));*/
 $viewDocumentByPath = new ViewDocument(array(
-	'filePath' => 'C:\\Users\\jining_huang\\Desktop\\1.pdf'
+	'filePath' => 'PATH_TO_FILE'
 	));
 $documentBeanByPath;
 try {

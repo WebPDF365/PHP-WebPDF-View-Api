@@ -12,12 +12,12 @@ require_once 'BaseBean.php';
  */
 class DocumentBean extends BaseBean {
 	/**
-	 * A unique string identifying this document.
+	 * The ID of the document uploaded
 	 */
 	public $docId;
 	
 	/**
-	 * The name of this document.
+	 * File name
 	 */
 	public $name;
 }

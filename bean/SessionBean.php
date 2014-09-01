@@ -13,12 +13,12 @@ require_once 'ViewUrl.php';
  */
 class SessionBean extends BaseBean {
 	/**
-	 * 新创建的session Id
+	 * New session ID
 	 */
 	public $sessionId;
 	
 	/**
-	 * Long :Session Id过期日期
+	 * (Long) Session ID expiry date
 	 */
 	public $expiryDate;
 	
@@ -28,7 +28,7 @@ class SessionBean extends BaseBean {
 	public $urls;
 
 	/**
-	 * boolean: SessionId 是否长期有效的标志…
+	 * (boolean) Whether sessionId is long-term valid, default is false
 	 */
 	public $infinite;
 }

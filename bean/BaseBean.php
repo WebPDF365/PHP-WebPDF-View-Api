@@ -10,12 +10,12 @@
  */
  class BaseBean {
 	/**
-	 * int, 错误信息代码，0:成功，其它:发生错误
+	 * (int) Error information code, 0: succeed; other: error
 	 */
 	public $error;
 
 	/**
-	 * 对应返回的详细信息描述
+	 * Error message
 	 */
 	public $msg;
  }
