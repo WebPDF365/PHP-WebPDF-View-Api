@@ -65,7 +65,7 @@ try {
  */
 $BYTEDATA_TO_FILE = array(0x10,0x10,0x10,0x10,0x10);
 $viewDocumentByData = new ViewDocument(array(
-	'fileName' => 'test document', 
+	'fileName' => 'test document2', 
 	'fileData' => $BYTEDATA_TO_FILE
 	));
 $documentBeanByData;
