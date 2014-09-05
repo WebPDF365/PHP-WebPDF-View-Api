@@ -1,6 +1,6 @@
 Documentation
 -------------
-For general API documentaion, please review the [WebPDF View API Documentation](http://api.webpdf365.com/ApiList).
+For general API document, please refer to the [WebPDF Cloud API Document](http://api.webpdf365.com/ApiList).
 
 
 To get started,
@@ -9,7 +9,7 @@ Include the required classes:
 require_once 'ViewApi.php';
 ```
 
-Intializing the API class:
+Initializing the API class:
 ```php
 $api_key = "YOUR_API_KEY";
 $viewApi = new ViewApi($api_key);

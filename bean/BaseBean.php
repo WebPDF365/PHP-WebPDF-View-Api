@@ -1,7 +1,7 @@
 ﻿<?php
 
 /**
- * 调用API,返回处理信息基础类
+ * Call API, return process information class.
  * 
  * @link http://api.webpdf365.com @endlink
  * 

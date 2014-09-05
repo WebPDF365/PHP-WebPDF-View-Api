@@ -3,7 +3,7 @@
 require_once 'BaseBean.php';
 
 /**
- * 调用上传文档API,返回处理信息类
+ * Call upload document API, return process information class.
  * 
  * @link http://api.webpdf365.com @endlink
  * 

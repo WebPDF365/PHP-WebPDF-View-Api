@@ -11,7 +11,7 @@ $viewApi = new ViewApi($api_key);
 
 /**
  *  Create new document we want to upload.
- *  用URL的方式
+ *  Use URL.
  */
 $viewDocumentByURL = new ViewDocument(array(
 	'fileName' => 'test document', 
@@ -37,7 +37,7 @@ try {
 
 /**
  *  Create new document we want to upload.
- *  用Path的方式
+ *  Use Path.
  */
 $viewDocumentByPath = new ViewDocument(array(
 	'filePath' => 'PATH_TO_FILE'
@@ -61,7 +61,7 @@ try {
 
 /**
  *  Create new document we want to upload.
- *  用文件数据的方式
+ *  Use document data.
  */
 $BYTEDATA_TO_FILE = array(0x10,0x10,0x10,0x10,0x10);
 $viewDocumentByData = new ViewDocument(array(

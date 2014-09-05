@@ -19,22 +19,22 @@ class ViewDocument {
 	public $fileName;
 	
 	/**
-	 * URL to the document you want to upload.
+	 * URL of the document you want to upload.
 	 */
 	public $fileUrl;
 	
 	/**
-	 * Internal path to the document you want to upload.
+	 * Internal path of the document you want to upload.
 	 */
 	public $filePath;
 	
 	/**
-	 * Byte Data to the document you want to upload.
+	 * Byte Data of the document you want to upload.
 	 */
 	public $fileData = null;
 	
 	/**
-	 * Creates a new Webpdf View Document.
+	 * Creates a new WebPDF View Document.
 	 *
 	 * @params array $params
 	 *  Array of document properties to set.
