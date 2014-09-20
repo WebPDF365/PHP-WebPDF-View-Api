@@ -5,8 +5,7 @@ require_once 'ViewApi.php';
 /**
  * Manipulate documents using the API.
  */
-//$api_key = "YOUR_API_KEY";
-$api_key = "e0dbfa00b9a743a1ad1bb398545bed52";
+$api_key = "YOUR_API_KEY";
 $viewApi = new ViewApi($api_key);
 
 /**
@@ -24,7 +23,7 @@ try {
 	if ($documentBeanByURL->error === 0) {
 		echo sprintf("Uploaded successfully, docId:%s", $documentBeanByURL->docId),'<br/>';
 	} else {
-		echo sprintf("Uploaded failed, error:%s, msg:%s", $documentBeanByURL->error, $documentBeanByURL->msg),'<br/>';
+		echo sprintf("Uploaded failed, error:%d, msg:%s", $documentBeanByURL->error, $documentBeanByURL->msg),'<br/>';
 		exit();
 	}
 } catch (ViewException $e) {
@@ -48,7 +47,7 @@ try {
 	if ($documentBeanByPath->error === 0) {
 		echo sprintf("Uploaded successfully, docId:%s", $documentBeanByPath->docId),'<br/>';
 	} else {
-		echo sprintf("Uploaded failed, error:%s, msg:%s", $documentBeanByPath->error, $documentBeanByPath->msg),'<br/>';
+		echo sprintf("Uploaded failed, error:%d, msg:%s", $documentBeanByPath->error, $documentBeanByPath->msg),'<br/>';
 		exit();
 	}
 } catch (ViewException $e) {
@@ -74,7 +73,7 @@ try {
 	if ($documentBeanByData->error === 0) {
 		echo sprintf("Uploaded successfully, docId:%s", $documentBeanByData->docId),'<br/>';
 	} else {
-		echo sprintf("Uploaded failed, error:%s, msg:%s", $documentBeanByData->error, $documentBeanByData->msg),'<br/>';
+		echo sprintf("Uploaded failed, error:%d, msg:%s", $documentBeanByData->error, $documentBeanByData->msg),'<br/>';
 		exit();
 	}
 } catch (ViewException $e) {
@@ -93,7 +92,7 @@ try {
 	if ($deleteBean->error === 0) {
 		echo sprintf("Deleted successfully, docId:%s", $documentBeanByData->docId),'<br/>';
 	} else {
-		echo sprintf("Deleted failed, error:%s, msg:%s", $deleteBean->error, $deleteBean->msg),'<br/>';
+		echo sprintf("Deleted failed, error:%d, msg:%s", $deleteBean->error, $deleteBean->msg),'<br/>';
 	}
 } catch (ViewException $e) {
 	echo $e->getMessage(),'http code:',$e->getCode(),'<br/>';
@@ -110,9 +109,9 @@ $sessionBean = null;
 try {
 	$sessionBean = $viewApi->view($documentBeanByURL->docId, array('expiry' => 120));
 	if ($sessionBean->error === 0) {
-		echo sprintf("View successfully, docId:%s, sessionId:%s\n", $documentBeanByURL->docId, $sessionBean->sessionId),'<br/>';
+		echo sprintf("View successfully, docId:%s, sessionId:%s", $documentBeanByURL->docId, $sessionBean->sessionId),'<br/>';
 	} else {
-		echo sprintf("View failed, error:%s, msg:%s", $sessionBean->error, $sessionBean->msg),'<br/>';
+		echo sprintf("View failed, error:%d, msg:%s", $sessionBean->error, $sessionBean->msg),'<br/>';
 		exit();
 	}
 } catch (ViewException $e) {
@@ -125,3 +124,51 @@ try {
 
 $html = '<iframe src="' . $sessionBean->urls->view . '" width="800px" height="600px"></iframe>';
 echo $html;
+
+/**
+ * Get session information based on session ID
+ */
+$sessionInfoBean = $viewApi->getSessionInfo($sessionBean->sessionId);
+if ($sessionInfoBean->error === 0) {
+    echo sprintf("Get session information based on session ID successfully,sessionId:%s, createDate:%s", $sessionInfoBean->sessionId, $sessionInfoBean->createDate),'<br/>';
+} else {
+    echo sprintf("Get session information based on session ID failed, error:%d", $sessionInfoBean->error),'<br/>';
+    exit();
+}
+
+/**
+ * Search session information based on document ID
+ */
+$sessionInfoListBean = $viewApi->getSessionInfoByDocId($documentBeanByURL->docId);
+if ($sessionInfoListBean->error === 0) {
+    echo sprintf("Search session information based on document ID successfully:"),'<br/>';
+    foreach($sessionInfoListBean->sessionList as $value) {
+        echo sprintf("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sessionId:%s, createDate:%s", $value->sessionId, $value->createDate),'<br/>';
+    }
+} else {
+    echo sprintf("Search session information based on document ID failed, error:%d", $sessionInfoListBean->error),'<br/>';
+    exit();
+}
+
+/**
+ * Delete session information based on session ID
+ */
+$deleteSessionBean = $viewApi->deleteSession($sessionBean->sessionId);
+if ($deleteSessionBean->error === 0) {
+    echo sprintf("Delete session information based on session ID successfully,sessionId:%s", $sessionBean->sessionId),'<br/>';
+} else {
+    echo sprintf("Delete session information based on session ID failed, error:%d", $deleteSessionBean->error),'<br/>';
+    exit();
+}
+
+/**
+ * Delete session information based on document ID
+ */
+$deleteSessionByDocIdBean = $viewApi->deleteSessionByDocId($documentBeanByURL->docId);
+if ($deleteSessionByDocIdBean->error === 0) {
+    echo sprintf("Delete session information based on session ID successfully,docId:%s", $documentBeanByURL->docId),'<br/>';
+} else {
+    echo sprintf("Delete session information based on session ID failed, error:%d", $deleteSessionByDocIdBean->error),'<br/>';
+    exit();
+}
+

@@ -17,5 +17,5 @@ class ViewUrl {
 	/**
 	 * URL parameter when use Viewer.js to embed document
 	 */
-	public $assets;
+	public $asserts;
 }

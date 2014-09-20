@@ -3,6 +3,9 @@
 require_once 'ViewException.php';
 require_once 'bean/DocumentBean.php';
 require_once 'bean/SessionBean.php';
+require_once 'bean/SessionBean.php';
+require_once 'bean/SessionInfoBean.php';
+require_once 'bean/SessionInfoListBean.php';
 require_once 'ViewDocument.php';
 
 /**
@@ -18,11 +21,12 @@ require_once 'ViewDocument.php';
  *
  */
 class ViewApi {
-	//private $apiServiceRootUrl = 'http://api.webpdf365.com/api/v1.0';
-	private $apiServiceRootUrl = 'http://it-api.webpdf365.com/api/v1.0';
-	private $apiDocumentUrl = '/documents';
-	private $apiUploadDocumentUrl = '/documents';
-	private $apiSessionUrl = '/sessions';
+	private $apiServiceRootUrl = 'https://api.webpdf365.com/api/v1.0';
+	private $apiDocumentUrl = '/documents/%docId%?api_key=';
+	private $apiUploadDocumentUrl = '/documents?api_key=';
+	private $apiSessionUrl = '/sessions?api_key=';
+	private $apiSessionInfoUrl = '/sessions/%sessionId%?api_key=';
+	private $apiSessionInfoByDocIdUrl = '/%docId%/sessions?api_key=';
 	private $apiKey;
 	
 	/**
@@ -48,9 +52,11 @@ class ViewApi {
 		}
 		
 		$this->apiKey = $apiKey;
-		$this->apiDocumentUrl = $this->apiServiceRootUrl . $this->apiDocumentUrl;
-		$this->apiUploadDocumentUrl = $this->apiServiceRootUrl . $this->apiUploadDocumentUrl . '?api_key=' . $this->apiKey;
-		$this->apiSessionUrl = $this->apiServiceRootUrl . $this->apiSessionUrl . '?api_key=' . $this->apiKey;
+		$this->apiDocumentUrl = $this->apiServiceRootUrl . $this->apiDocumentUrl .  $this->apiKey;
+		$this->apiUploadDocumentUrl = $this->apiServiceRootUrl . $this->apiUploadDocumentUrl . $this->apiKey;
+		$this->apiSessionUrl = $this->apiServiceRootUrl . $this->apiSessionUrl . $this->apiKey;
+		$this->apiSessionInfoUrl = $this->apiServiceRootUrl . $this->apiSessionInfoUrl . $this->apiKey;
+		$this->apiSessionInfoByDocIdUrl = $this->apiServiceRootUrl . $this->apiSessionInfoByDocIdUrl . $this->apiKey;
 		return $this;
 	}
 	
@@ -113,7 +119,7 @@ class ViewApi {
 		
 		// Upload the file.
 		$result = $this->httpRequest($curl_params);
-		$documentBean = new DocumentBean;
+		$documentBean = new DocumentBean();
 		$documentBean->error = $result->response->error;
 		$documentBean->msg = $result->response->msg;
 		$documentBean->docId = $result->response->docId;
@@ -127,7 +133,7 @@ class ViewApi {
 	/**
 	 * Removes a document completely from the View API servers.
 	 * 
-	 * @param String docId
+	 * @param String $docId
 	 * 	The docId of the file to delete
 	 * 
 	 * @throws ViewException
@@ -138,14 +144,14 @@ class ViewApi {
 		if (empty($docId)) {
 			throw new ViewException('Missing required docid.');
 		}
-		$apideleteUrl = $this->apiDocumentUrl . '/' . $docId . '?api_key=' . $this->apiKey;
+		$apideleteUrl = str_replace('%docId%', $docId, $this->apiDocumentUrl);
 		$curl_params[CURLOPT_URL] = $apideleteUrl;
 		$curl_params[CURLOPT_CUSTOMREQUEST] = 'DELETE';
 		$curl_params[CURLOPT_HTTPHEADER][] = 'Content-Type: application/json';
 		
 		// Removes the file.
 		$result = $this->httpRequest($curl_params);
-		$baseBean = new BaseBean;
+		$baseBean = new BaseBean();
 		$baseBean->error = $result->response->error;
 		$baseBean->msg = $result->response->msg;
 		return $baseBean;
@@ -155,12 +161,12 @@ class ViewApi {
 	 * Create a session for a single document.
 	 * Sessions can only be created for documents that have a status of done
 	 * 
-	 * @param String docId
+	 * @param String $docId
 	 * 	The docId of the file to view
 	 * 
-	 * @param Map<String, Object> params
+	 * @param Map<String, Object> $params
 	 * 	A key-value pair of POST params
-	 * 		Integer expiry -- Expiry time of the session starting from current time, in minutes, default is 60, can not be negative number or 0.
+	 * 		Long expiry -- Expiry time of the session starting from current time, in minutes, default is 60, can not be negative number or 0.
 	 * 		Boolean infinite -- Whether SessionId is always valid, default is false.
 	 * 
 	 * @return SessionBean
@@ -178,7 +184,7 @@ class ViewApi {
 		$curl_params[CURLOPT_POSTFIELDS] = json_encode($params);
 		
 		$result = $this->httpRequest($curl_params);
-		$sessionBean = new SessionBean;
+		$sessionBean = new SessionBean();
 		$viewUrl = new ViewUrl;
 		$viewUrl->view = $result->response->urls->view;
 		$viewUrl->assets = $result->response->urls->assets;
@@ -190,7 +196,114 @@ class ViewApi {
 		$sessionBean->infinite = $result->response->infinite;
 		return $sessionBean;
 	}
-	
+
+	/**
+     * Get session information based on session ID
+     *
+     * @param String $sessionId
+     * 	The sessionId of the Session ID to get session information
+     *
+     * @return SessionInfoBean
+     * 	The response is an object converted from JSON
+     */
+    public function getSessionInfo($sessionId) {
+        if (empty($sessionId)) {
+            throw new ViewException('Missing required sessionId.');
+        }
+        $curl_params[CURLOPT_URL] = str_replace('%sessionId%', $sessionId, $this->apiSessionInfoUrl);
+        $curl_params[CURLOPT_CUSTOMREQUEST] = 'GET';
+
+        $result = $this->httpRequest($curl_params);
+        $sessionInfoBean = new SessionInfoBean();
+        $sessionInfoBean->error = $result->response->error;
+        $sessionInfoBean->sessionId = $result->response->sessionId;
+        $sessionInfoBean->docId = $result->response->docId;
+        $sessionInfoBean->expiry = $result->response->expiry;
+        $sessionInfoBean->expiryDate = $result->response->expiryDate;
+        $sessionInfoBean->createDate = $result->response->createDate;
+        $sessionInfoBean->infinite = $result->response->infinite;
+        return $sessionInfoBean;
+    }
+
+	/**
+	 * Delete session information based on session ID
+	 *
+	 * @param String $sessionId
+	 * 	The sessionId of the Session ID to delete
+	 *
+	 * @return BaseBean
+	 * 	The response is an object converted from JSON
+	 */
+	public function deleteSession($sessionId) {
+	    if (empty($sessionId)) {
+            throw new ViewException('Missing required sessionId.');
+        }
+	    $curl_params[CURLOPT_URL] = str_replace('%sessionId%', $sessionId, $this->apiSessionInfoUrl);
+        $curl_params[CURLOPT_CUSTOMREQUEST] = 'DELETE';
+        $curl_params[CURLOPT_HTTPHEADER][] = 'Content-Type: application/json';
+
+        $result = $this->httpRequest($curl_params);
+        $baseBean = new BaseBean();
+        $baseBean->error = $result->response->error;
+        return $baseBean;
+	}
+
+	/**
+	 * Search session information based on document ID
+	 *
+	 * @param String $docId
+	 *  The docId of the file to search session information
+	 *
+	 * @return SessionInfoListBean
+	 *  The response is an object converted from JSON
+	 */
+	public function getSessionInfoByDocId($docId) {
+	    if (empty($docId)) {
+            throw new ViewException('Missing required docid.');
+        }
+        $curl_params[CURLOPT_URL] = str_replace('%docId%', $docId, $this->apiSessionInfoByDocIdUrl);
+        $curl_params[CURLOPT_CUSTOMREQUEST] = 'GET';
+
+        $result = $this->httpRequest($curl_params);
+        $sessionInfoListBean = new SessionInfoListBean();
+		$sessionInfoListBean->sessionList = array();
+        $sessionInfoListBean->error = $result->response->error;
+        foreach($result->response->sessionList as $value) {
+            $sessionInfo = new SessionInfo();
+            $sessionInfo->sessionId = $value->sessionId;
+            $sessionInfo->docId =$value->docId;
+            $sessionInfo->expiry = $value->expiry;
+            $sessionInfo->expiryDate = $value->expiryDate;
+            $sessionInfo->createDate = $value->createDate;
+            $sessionInfo->infinite = $value->infinite;
+            array_push($sessionInfoListBean->sessionList, $sessionInfo);
+        }
+        return $sessionInfoListBean;
+	}
+
+	/**
+	 * Delete session information based on document ID
+	 *
+	 * @param String $docId
+	 * 	The docId of the file to delete session
+	 *
+	 * @return BaseBean
+	 * 	The response is an object converted from JSON
+	 */
+	public function deleteSessionByDocId($docId) {
+	    if (empty($docId)) {
+            throw new ViewException('Missing required docid.');
+        }
+        $curl_params[CURLOPT_URL] = str_replace('%docId%', $docId, $this->apiSessionInfoByDocIdUrl);
+        $curl_params[CURLOPT_CUSTOMREQUEST] = 'DELETE';
+        $curl_params[CURLOPT_HTTPHEADER][] = 'Content-Type: application/json';
+
+        $result = $this->httpRequest($curl_params);
+        $baseBean = new BaseBean();
+        $baseBean->error = $result->response->error;
+        return $baseBean;
+	}
+
 	/**
 	 * Makes an HTTP request to the Webpdf View API and returns the result.
 	 *
@@ -206,6 +319,8 @@ class ViewApi {
 		// Return the result of the curl_exec().
 		$curl_params[CURLOPT_RETURNTRANSFER] = TRUE;
 		$curl_params[CURLOPT_FOLLOWLOCATION] = TRUE;
+		$curl_params[CURLOPT_SSL_VERIFYPEER] = FALSE;
+		$curl_params[CURLOPT_SSL_VERIFYHOST] = FALSE;
 		
 		// Set other CURL_OPT params.
 		foreach ($curl_params as $curl_opt => $val) {
